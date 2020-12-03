@@ -11,7 +11,7 @@ import sys
 sys.path.append("..")
 from config import cfg
 from data_prepare import gen_data_batch
-from ds_cnn_model import sequential_model1
+from cnn_model import sequential_model
 
 
 model = sequential_model()
