@@ -44,7 +44,8 @@ def resample_signal_16_to_8(origin_signal, origin_rate, rate=2):
         resampled_signal = np.append(resampled_signal, origin_signal[int(rate * n)])
     return int(origin_rate/rate), resampled_signal
 
-
+# 生成标签数据 从wav_data目录里。
+# wav_data 目录存放的是音频文件
 def gen_label_rm_bad():
     wav_dirs = os.listdir(data_dir)  
     for index, wav_dir in enumerate(wav_dirs):
