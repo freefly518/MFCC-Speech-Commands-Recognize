@@ -4,6 +4,8 @@ import random
 import numpy as np
 import tensorflow as tf
 from mfcc import *
+
+
 # 音频目录
 data_dir = "./wav_data/"
 # 标签目录
@@ -140,9 +142,13 @@ def gennerate_terecord_file(tfrecordfilename, label_file):
             resampled_rate, resampled_signal = resample_signal_16_to_8(wave_data, sample_rate, rate=2)
             # resampled_signal 少于8000部分用零填充
             resampled_signal = np.append(resampled_signal, np.zeros(8000 - len(resampled_signal), dtype=np.int16))
-
+            # 提取MFCC特征
+            # resampled_signal 重音频数据
+            # resampled_rate 重采样率
             mfcc = extract_mfcc(resampled_signal, resampled_rate).astype(np.int64)    
 
+            # [50 12] 形状变成：50行，12列
+            # 只取MFCC12列特征数据
             mfcc_features = np.reshape(mfcc, [50, 12])
             mfcc_features = mfcc_features.tostring()
             label = int(label)
