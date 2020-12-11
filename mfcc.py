@@ -8,18 +8,34 @@ from scipy.fftpack import dct
 sys.path.append("..")
 from config import cfg
 
-
 def extract_mfcc(input_signal, sample_rate):
-    # 预加重 y(t)=x(t)−αx(t−1)
-    emphasized_signal = np.append(input_signal[0], input_signal[1:] - cfg.mfcc.pre_emphasis * input_signal[:-1])
-    # 分帧
-    frame_size = cfg.mfcc.frame_length_ms * 0.001
-    frame_stride = cfg.mfcc.frame_shift_ms * 0.001
-    frame_length, frame_step = frame_size * sample_rate, frame_stride * sample_rate
+    """
+    提取mfcc特征
+    将音频wav格式数据生成mfcc格式数据，用于模型训练
+    :param:input_signal  wav音频数据格式数组
+    :param:sample_rate   采样率
+    """
 
+    # 1、预加重 y(t)=x(t)−αx(t−1)
+    emphasized_signal = np.append(input_signal[0], input_signal[1:] - cfg.mfcc.pre_emphasis * input_signal[:-1])
+    # 2、分帧 CHUNK
+    frame_size = cfg.mfcc.frame_length_ms * 0.001   # 毫秒转成秒 frame_size = 32ms * 0.001 = 0.032s
+    frame_stride = cfg.mfcc.frame_shift_ms * 0.001  # 毫秒转成秒 frame_stride = 20ms * 0.001 = 0.020s
+    # sample_rate = 8000    采样率 一秒钟采集多少数据
+    # frame_size = 0.032    帧长 单位秒
+    # frame_stride = 0.020  帧移 单位秒
+    # frame_length = frame_size * sample_rate = 0.032 * 8000 = 256 帧长(数据量) 单位个
+    # frame_step = frame_stride * sample_rate = 0.020 * 8000 = 160 帧移(数据量) 单位个
+    frame_length, frame_step = frame_size * sample_rate, frame_stride * sample_rate
+    # TODO 验证是否是8000
+    # 音频长度 8000
     signal_length = len(emphasized_signal)
+    # 每帧长度
+    # round() 方法返回浮点数x的四舍五入值。
     frame_length = int(round(frame_length))
+    # 帧移
     frame_step = int(round(frame_step))
+    # 总帧数
     num_frames = int(np.ceil(float(np.abs(signal_length - frame_length)) / frame_step + 1))
 
     pad_signal_length = num_frames * frame_step + frame_length

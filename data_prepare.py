@@ -42,9 +42,9 @@ def _int64_feature(value):
 # 采样率16000到8000
 def resample_signal_16_to_8(origin_signal, origin_rate, rate=2):
     """
-    param:origin_signal 原始数据,格式数组
-    param:origin_rate   原始采样率 16000
-    param:rate          转化率
+    :param:origin_signal 原始数据,格式数组
+    :param:origin_rate   原始采样率 16000
+    :param:rate          转化率
     """
     if rate > len(origin_signal):
         print("# num out of length, return arange:", end=" ")
@@ -84,7 +84,8 @@ def split_train_val_label():
                 lines = f.readlines()
             # f.close() 不用手动关闭
             for _ in range(int(len(lines) * 0.8)):
-                fa.write(lines.pop(random.randint(0, len(lines) - 1)))  # lines.pop() 函数用于移除列表中的一个元素（默认最后一个元素），并且返回该元素的值
+                # lines.pop() 函数用于移除列表中的一个元素（默认最后一个元素），并且返回该元素的值
+                fa.write(lines.pop(random.randint(0, len(lines) - 1)))
             fb.writelines(lines)
     # fa.close() 不用手动关闭
     # fb.close() 不用手动关闭
@@ -118,8 +119,12 @@ def get_imgs_labels(label_file):
     # f.close() 不用手动关闭
     return wav_filenames, labels
 
-# 生成tfrecords文件
 def gennerate_terecord_file(tfrecordfilename, label_file):
+    """
+    生成 tfrecord 文件
+    :param:tfrecordfilename tfrecord文件路径和名称
+    :param:label_file label文件
+    """
     cnt = 0
     # 获取wav文列表，label列表
     filenames, labels = get_imgs_labels(label_file)
@@ -130,7 +135,10 @@ def gennerate_terecord_file(tfrecordfilename, label_file):
             # wave_data 音频数据格式数组
             sample_rate, wave_data = scipy.io.wavfile.read(filename)
             # 采样率16000到8000
+            # resampled 采样率
+            # resampled_signal 音频数据格式数组
             resampled_rate, resampled_signal = resample_signal_16_to_8(wave_data, sample_rate, rate=2)
+            # resampled_signal 少于8000部分用零填充
             resampled_signal = np.append(resampled_signal, np.zeros(8000 - len(resampled_signal), dtype=np.int16))
 
             mfcc = extract_mfcc(resampled_signal, resampled_rate).astype(np.int64)    

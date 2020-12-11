@@ -7,3 +7,5 @@
 6. If you have some question, you can contact with me. WeChat:xuelei_jian  
 7. TODO: Covert the model and inference it on the Cotex-M microcontroller.    
 8. Your star is the best encouragement for me.
+
+pip install easydict
