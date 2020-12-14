@@ -16,24 +16,29 @@ from cnn_model import sequential_model
 
 model = sequential_model()
 
-
+# 自定义 Callback,动态调整学习率
 class MySetLR(tf.keras.callbacks.Callback):
+    # 每轮开始时候
     def on_epoch_begin(self, epoch, logs=None):
+        # 获取学习率
         learning_rate = model.optimizer.lr.numpy().astype(np.float)
-        if epoch < 10:
+        if epoch < 10:  # epoch小于10，不修改学习率
             lr = learning_rate
         else:
-            lr = learning_rate * np.exp(0.1 * (10 - epoch))
+            lr = learning_rate * np.exp(0.1 * (10 - epoch))  # 学习率按e的指数减小。10 - epoch 为负数时，指数值接近零
+        # 设置学习率
         K.set_value(model.optimizer.lr, lr)
         print('\nEpoch %05d: LearningRateScheduler reducing learning ' 'rate to %s.' % (epoch + 1, lr))
 
-
+# 自定义Callback
+# 每个epoch 结束时打印学习率
 class PrintLR(tf.keras.callbacks.Callback):
     def on_epoch_end(self, epoch, logs=None):
         print('\nLearning rate for epoch {} is {}'.format(epoch + 1, model.optimizer.lr.numpy()))
 
 
 def train_and_val():
+    # 设置gpu
     gpus = tf.config.experimental.list_physical_devices('GPU')
     if gpus:
         try:
@@ -45,12 +50,14 @@ def train_and_val():
         except RuntimeError as e:
             # Memory growth must be set before GPUs have been initialized
             print(e)
-
+    # 获取训练集数据
     train_dataset = gen_data_batch(cfg.train.dataset, cfg.batch_size, cfg.epochs, is_training=True)
 
+    # 获取验证集数据
     val_dataset = gen_data_batch(cfg.val.dataset, cfg.batch_size, is_training=False)
-
+    # 优化函数adam
     optimizer = tf.keras.optimizers.Adam(lr=cfg.train.learning_rate)
+    # 损失函数 交叉熵损失
     loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
 
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
