@@ -145,10 +145,10 @@ def gennerate_terecord_file(tfrecordfilename, label_file):
             # 提取MFCC特征
             # resampled_signal 重音频数据
             # resampled_rate 重采样率
-            mfcc = extract_mfcc(resampled_signal, resampled_rate).astype(np.int64)    
+            mfcc = extract_mfcc(resampled_signal, resampled_rate).astype(np.int64)
 
             # [50 12] 形状变成：50行，12列
-            # 只取MFCC12列特征数据
+            # 只取MFCC 12列特征数据
             mfcc_features = np.reshape(mfcc, [50, 12])
             mfcc_features = mfcc_features.tostring()
             label = int(label)

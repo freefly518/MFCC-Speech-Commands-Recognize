@@ -59,15 +59,22 @@ def train_and_val():
     optimizer = tf.keras.optimizers.Adam(lr=cfg.train.learning_rate)
     # 损失函数 交叉熵损失
     loss = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True)
-
+    # 编译模型
     model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
+    # 回调函数
+    # ReduceLROnPlateau 当指标停止改善时 降低学习率
+    # monitor	要监视的数量
+    # factor	学习率降低的因素 new_lr = lr * factor
+    # patience	没有改善的时期数 之后学习率将降低
+    # verbose	诠释 0：安静，1：更新消息。
 
+    # histogram_freq 直方图频率 0：不被计算，1：计算
     callbacks = [
         ReduceLROnPlateau(monitor='loss', factor=0.5, patience=5, verbose=1),
         MySetLR(),
         TensorBoard(log_dir=cfg.log_dir, histogram_freq=1),
     ]
-
+    # 训练模型
     history = model.fit(train_dataset,
                         epochs=cfg.epochs,
                         callbacks=callbacks,
@@ -84,7 +91,7 @@ def train_and_val():
     epochs_range = range(cfg.epochs)
 
     plt.figure()
-    plt.subplot(1, 2, 1)
+    plt.subplot(1, 2, 1)  # subplot() 函数允许你在同一图中绘制不同的东西
     plt.plot(epochs_range, acc, label='Training Accuracy')
     plt.plot(epochs_range, val_acc, label='Validation Accuracy')
     plt.legend(loc='lower right')

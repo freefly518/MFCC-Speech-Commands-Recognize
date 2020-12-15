@@ -10,10 +10,13 @@ def sequential_model():
     input_wav = keras.Input(shape=(50, 12, 1))
     x = layers.Conv2D(32, (3, 3), activation='relu')(input_wav)
     x = layers.MaxPooling2D()(x)
+
     x = layers.Conv2D(64, (3, 3), activation="relu")(x)
     x = layers.MaxPooling2D()(x)
+    x = layers.Dropout(0.5)
 
     x = layers.Flatten()(x)
+    x = layers.Dropout(0.5)
     x = layers.Dense(128, activation='relu')(x)
     model_output = layers.Dense(cfg.num_classes)(x)
     model = keras.Model(input_wav, model_output)

@@ -16,16 +16,15 @@ cfg.mfcc.frame_shift_ms = 20
 cfg.mfcc.frame_length_ms = 32
 cfg.mfcc.pre_emphasis = 0.97
 
-
 # training options
 cfg.train = edict()
-cfg.train.num_samples = 7017
+cfg.train.num_samples = 7017  # 运行countTfrecord.py 计算train.tfrecord数据总量
 cfg.train.learning_rate = 1e-3
 cfg.train.dataset = "./tfrecords/train.tfrecords"
 
 # training options
 cfg.val = edict()
-cfg.val.num_samples = 1757
+cfg.val.num_samples = 1757  # 运行countTfrecord.py 计算val.tfrecord数据总量
 cfg.val.dataset = "./tfrecords/val.tfrecords"
 
 
